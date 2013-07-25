@@ -1,0 +1,216 @@
+module.exports = function (grunt) {
+	
+	// Initialize configuration object
+	grunt.initConfig({
+
+		// Read in project settings
+		pkg: grunt.file.readJSON('package.json'),
+
+		// Project settings & variables (can be added, edited and removed)
+		opts: {
+			base: '{{assets_path}}',
+			clean: {
+				files: ['<%= opts.css.min %>', '<%= opts.less.compiled %>', '<%= opts.js.min %>', '<%= opts.js.concat %>']
+			},
+			compress: {
+				mode: 'gzip',
+				files: ['<%= opts.js.min %>']
+			},
+			css: {
+				base: '<%= opts.base %>{{css_path}}',
+				libs: ['<%= opts.base %>/libs/css'],
+				files: '{{css_files}}',
+				min: '<%= opts.css.base %>/style.min.css'
+			},
+			js: {
+				base: '<%= opts.base %>{{js_path}}',
+				libs: ['<%= opts.base %>/libs/js'],
+				files: '{{js_files}}',
+				concat: '<%= opts.js.base %>/concat.js',
+				min: ['<%= opts.js.base %>/script.min.js']
+			},
+			less: {
+				base: '<%= opts.base %>{{less_path}}',
+				libs: ['<%= opts.base %>/libs/less'],
+				files: '{{less_file}}',
+				compiled: '<%= opts.css.base %>/less.css'
+			},
+			notify: {
+				watch: {
+					title: 'Live Reloaded!',
+					message: 'Files were modified, recompiled and site reloaded'
+				}
+			},
+			phpunit: {
+
+			},
+			sass: {
+				base: '<%= opts.base %>{{sass_path}}',
+				libs: ['<%= opts.base %>/libs/sass'],
+				files: '{{sass_file}}',
+				compiled: '<%= opts.css.base %>/sass.css'
+			},
+			stylus: {
+				base: '<%= opts.base %>{{stylus_path}}',
+				libs: ['<%= opts.base %>/libs/stylus'],
+				files: '{{stylus_file}}',
+				compiled: '<%= opts.css.base %>/stylus.css'
+			},
+			watch: {
+				files: ['<%= opts.js.files', '<%= opts.css.files %>', '<%= opts.less.files %>', '!<%= opts.less.compiled %>']
+			}
+		},
+
+		// Clean files and folders before replacement
+		clean: {
+			all: {
+				src: ['<%= opts.clean.files %>']
+			},
+			concat: {
+				src: ['<%= opts.js.concat %>']
+			}
+		},
+
+		// Compress files 1-to-1 -  gzip
+		compress: {
+			main: {
+				options: {
+					mode: '<%= opts.compress.mode %>'
+				},
+				expand: true,
+				src: '<%= opts.compress.files %>'
+			}
+		},
+
+		// Concatenate javascript files
+		concat: {
+			options: {
+				separator: ';',
+				block: true,
+				line: true,
+				stripBanners: true
+			},
+			dist: {
+				cwd: '<%= opts.js.base %>',
+				src: ['<%= opts.js.files %>'],
+				dest: '<%= opts.js.concat %>'
+			}
+		},
+
+		// Minify and concatenate CSS files
+		cssmin: {
+			minify: {
+				options: {
+
+				},
+				files: {
+					cwd: '<%= opts.css.base %>',
+					'<%= opts.css.min %>': '<%= opts.css.files %>'
+				}
+			}
+		},
+
+		// Javascript linting - JS Hint
+		jshint: {
+			files: {
+				cwd: '<%= opts.js.base %>',
+				src: '<%= opts.js.files %>'
+			},
+			options: {
+				// Options to override JSHint defaults
+				curly: true,
+				indent: 4,
+				trailing: true,
+				devel: true,
+				globals: {
+					jQuery: true
+				}
+			}
+		},
+
+		// Compile LESS files
+		less: {
+			main: {
+				options: {
+					yuicompress: true,
+					ieCompat: true
+				},
+				files: {
+					'<%= opts.less.compiled %>': '<%= opts.less.files %>'
+				}
+			}
+		},
+
+		// Display notifications
+		notify: {
+			watch: {
+				options: {
+					title: '<%= opts.notify.watch.title %>',
+					message: '<%= opts.notify.watch.message %>'
+				}
+			}
+		},
+
+		// PHPUnit tests
+		phpunit: {
+			classes: {
+				dir: '/'
+			}
+		},
+
+		// SASS preprocessing
+		sass: {
+			dist: {
+				files: {
+					'<%= opts.sass.compiled %>' : '<%= opts.sass.files %>'
+				}
+			}
+		},
+
+		// Stylus preprocessing
+		stylus: {
+
+		},
+
+		// Javascript minification - uglify
+		uglify: {
+			options: {
+				preserveComments: false,
+
+			},
+			dist: {
+				files: {
+					'<%= opts.js.min %>': '<%= opts.js.concat %>'
+				}
+			}
+		},
+
+		// Watch for files and folder changes
+		watch: {
+			options: {
+				livereload: true
+			},
+			files: '<%= opts.watch.files %>',
+			tasks: ['default', 'notify:watch']
+		}
+
+	});
+
+	// Load npm tasks
+	grunt.loadNpmTasks('grunt-contrib-clean');
+	grunt.loadNpmTasks('grunt-contrib-compress');
+	grunt.loadNpmTasks('grunt-contrib-concat');
+	grunt.loadNpmTasks('grunt-contrib-cssmin');
+	grunt.loadNpmTasks('grunt-contrib-jshint');
+	grunt.loadNpmTasks('grunt-contrib-less');
+	grunt.loadNpmTasks('grunt-contrib-livereload');
+	grunt.loadNpmTasks('grunt-contrib-uglify');
+	grunt.loadNpmTasks('grunt-contrib-watch');
+	grunt.loadNpmTasks('grunt-contrib-sass');
+	grunt.loadNpmTasks('grunt-contrib-stylus');
+	grunt.loadNpmTasks('grunt-notify');
+	grunt.loadNpmTasks('grunt-phpunit');
+
+	// Register tasks
+	{{task}}
+}
