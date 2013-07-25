@@ -85,9 +85,14 @@ class GruntSetupCommand extends Command {
 			// Add node_modules folder to .gitignore
 			$this->generator->addToGitingnore('.gitignore', "\n/node_modules");
 
-			// Install / update modules
+			// Install / update modules, different command for each os type
 			$this->info('Installing / updating required grunt plugins...');
-			shell_exec('sudo npm install');
+			if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN')
+			{
+			    shell_exec('npm install');
+			} else {
+			    shell_exec('sudo npm install');
+			}
 		}
 		else
 		{
