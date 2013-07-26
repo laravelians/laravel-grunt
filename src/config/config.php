@@ -34,10 +34,10 @@ return array(
 	| We've set a sensible default, but feel free to update it.
 	|
 	| E.g:
-	| 'css_files' => '["style1.css", "style2.css", "style3.css"]',
+	| 'css_files' => array('style1.css', 'style2.css', 'style3.css'),
 	|
 	*/
-	'css_files' => '["*.css"]',
+	'css_files' => "['public/assets/css/s1.css', 'public/assets/css/s2.css', 'public/assets/css/*.css']",
 
 	/*
 	|--------------------------------------------------------------------------
@@ -60,10 +60,10 @@ return array(
 	| We've set a sensible default, but feel free to update it.
 	|
 	| E.g:
-	| 'js_files' => '["script1.js", "script2.js", "script3.js"]',
+	| 'js_files' => array('script1.js', 'script2.js', 'script3.js'),
 	|
 	*/
-	'js_files' => '["*.js"]',
+	'js_files' => "['public/assets/js/s1.js', 'public/assets/js/s2.js']",
 
 	/*
 	|--------------------------------------------------------------------------

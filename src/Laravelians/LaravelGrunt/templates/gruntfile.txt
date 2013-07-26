@@ -7,33 +7,27 @@ module.exports = function (grunt) {
 		pkg: grunt.file.readJSON('package.json'),
 
 		// Project settings & variables (can be added, edited and removed)
-		opts: {
+		options: {
 			base: '{{assets_path}}',
 			clean: {
-				files: ['<%= opts.css.min %>', '<%= opts.less.compiled %>', '<%= opts.js.min %>', '<%= opts.js.concat %>']
-			},
-			compress: {
-				mode: 'gzip',
-				files: ['<%= opts.js.min %>']
+				files: ['<%= options.css.min %>', '<%= options.less.compiled %>', '<%= options.js.min %>', '<%= options.js.concat %>', '<%= options.css.concat %>']
 			},
 			css: {
-				base: '<%= opts.base %>{{css_path}}',
-				libs: ['<%= opts.base %>/libs/css'],
-				files: '{{css_files}}',
-				min: '<%= opts.css.base %>/style.min.css'
+				base: '<%= options.base %>{{css_path}}',
+				files: {{css_files}},
+				concat: '<%= options.css.base %>/concat.css',
+				min: '<%= options.css.base %>/style.min.css'
 			},
 			js: {
-				base: '<%= opts.base %>{{js_path}}',
-				libs: ['<%= opts.base %>/libs/js'],
-				files: '{{js_files}}',
-				concat: '<%= opts.js.base %>/concat.js',
-				min: ['<%= opts.js.base %>/script.min.js']
+				base: '<%= options.base %>{{js_path}}',
+				files: {{js_files}},
+				concat: '<%= options.js.base %>/concat.js',
+				min: '<%= options.js.base %>/script.min.js'
 			},
 			less: {
-				base: '<%= opts.base %>{{less_path}}',
-				libs: ['<%= opts.base %>/libs/less'],
-				files: '{{less_file}}',
-				compiled: '<%= opts.css.base %>/less.css'
+				base: '<%= options.base %>{{less_path}}',
+				file: '<%= options.less.base %>{{less_file}}',
+				compiled: '<%= options.css.base %>/less.css'
 			},
 			notify: {
 				watch: {
@@ -46,75 +40,62 @@ module.exports = function (grunt) {
 			},
 			sass: {
 				base: '<%= opts.base %>{{sass_path}}',
-				libs: ['<%= opts.base %>/libs/sass'],
-				files: '{{sass_file}}',
+				files: '<%= options.sass.base %>{{sass_file}}',
 				compiled: '<%= opts.css.base %>/sass.css'
 			},
 			stylus: {
 				base: '<%= opts.base %>{{stylus_path}}',
-				libs: ['<%= opts.base %>/libs/stylus'],
-				files: '{{stylus_file}}',
+				files: '<%= options.stylus.base %>{{stylus_file}}',
 				compiled: '<%= opts.css.base %>/stylus.css'
 			},
 			watch: {
-				files: ['<%= opts.js.files', '<%= opts.css.files %>', '<%= opts.less.files %>', '!<%= opts.less.compiled %>']
+				files: ['']
 			}
 		},
 
 		// Clean files and folders before replacement
 		clean: {
 			all: {
-				src: ['<%= opts.clean.files %>']
+				src: ['<%= options.clean.files %>']
 			},
 			concat: {
-				src: ['<%= opts.js.concat %>']
-			}
-		},
-
-		// Compress files 1-to-1 -  gzip
-		compress: {
-			main: {
-				options: {
-					mode: '<%= opts.compress.mode %>'
-				},
-				expand: true,
-				src: '<%= opts.compress.files %>'
+				src: ['<%= options.js.concat %>', '<%= options.css.concat %>']
 			}
 		},
 
 		// Concatenate javascript files
 		concat: {
-			options: {
-				separator: ';',
-				block: true,
-				line: true,
-				stripBanners: true
+			js: {
+				options: {
+					separator: ';',
+					block: true,
+					line: true,
+					stripBanners: true
+				},
+				files: {
+					'<%= options.js.concat %>' : ['<%= options.js.files %>']
+				}
 			},
-			dist: {
-				cwd: '<%= opts.js.base %>',
-				src: ['<%= opts.js.files %>'],
-				dest: '<%= opts.js.concat %>'
+			css: {
+				files: {
+					'<%= options.css.concat %>' : ['<%= options.css.files %>']
+				}
 			}
 		},
 
 		// Minify and concatenate CSS files
 		cssmin: {
-			minify: {
-				options: {
-
-				},
-				files: {
-					cwd: '<%= opts.css.base %>',
-					'<%= opts.css.min %>': '<%= opts.css.files %>'
-				}
+			dist: {
+		       		src: ['<%= options.css.concat %>'],
+			        	dest: '<%= options.css.min %>'
 			}
 		},
 
 		// Javascript linting - JS Hint
 		jshint: {
 			files: {
-				cwd: '<%= opts.js.base %>',
-				src: '<%= opts.js.files %>'
+				cwd: '<%= options.js.base %>',
+				src: '<%= options.js.files %>'
 			},
 			options: {
 				// Options to override JSHint defaults
@@ -130,14 +111,12 @@ module.exports = function (grunt) {
 
 		// Compile LESS files
 		less: {
-			main: {
-				options: {
-					yuicompress: true,
-					ieCompat: true
-				},
-				files: {
-					'<%= opts.less.compiled %>': '<%= opts.less.files %>'
-				}
+			options: {
+				yuicompress: true,
+				ieCompat: true
+			},
+			files: {
+				'<%= options.less.compiled %>': '<%= options.less.files %>'
 			}
 		},
 
@@ -145,8 +124,8 @@ module.exports = function (grunt) {
 		notify: {
 			watch: {
 				options: {
-					title: '<%= opts.notify.watch.title %>',
-					message: '<%= opts.notify.watch.message %>'
+					title: '<%= options.notify.watch.title %>',
+					message: '<%= options.notify.watch.message %>'
 				}
 			}
 		},
@@ -162,7 +141,7 @@ module.exports = function (grunt) {
 		sass: {
 			dist: {
 				files: {
-					'<%= opts.sass.compiled %>' : '<%= opts.sass.files %>'
+					'<%= options.sass.compiled %>' : '<%= options.sass.files %>'
 				}
 			}
 		},
@@ -176,11 +155,10 @@ module.exports = function (grunt) {
 		uglify: {
 			options: {
 				preserveComments: false,
-
 			},
 			dist: {
 				files: {
-					'<%= opts.js.min %>': '<%= opts.js.concat %>'
+					'<%= options.js.min %>' : ['<%= options.js.concat %>']
 				}
 			}
 		},
@@ -190,7 +168,7 @@ module.exports = function (grunt) {
 			options: {
 				livereload: true
 			},
-			files: '<%= opts.watch.files %>',
+			files: '<%= options.watch.files %>',
 			tasks: ['default', 'notify:watch']
 		}
 
@@ -212,5 +190,5 @@ module.exports = function (grunt) {
 	grunt.loadNpmTasks('grunt-phpunit');
 
 	// Register tasks
-	{{task}}
+	{{default_task}}
 }

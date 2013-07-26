@@ -84,7 +84,7 @@ class Gruntfile {
 	 */
 	protected function addDefaultTask($content, $plugins)
 	{
-		$pattern = "/{{task}}/i";
+		$pattern = "/{{default_task}}/i";
 		$task = "grunt.registerTask('default', ['clean:all', ";
 
 		foreach ($plugins as $plugin)
@@ -92,7 +92,7 @@ class Gruntfile {
 			$task .= "'" . $plugin ."', ";
 		}
 
-		$task .= "'concat', 'uglify', 'cssmin', 'clean:concat']);";
+		$task .= "'concat:js', 'concat:css', 'uglify', 'cssmin', 'clean:concat']);";
 
 		$content = preg_replace($pattern, $task, $content);
 
